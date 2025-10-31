@@ -3,10 +3,11 @@
 ### Back end
 
 - [x] Criar setup inicial
-- [ ] Criar conexão com banco de dados
-- [ ] Criar migrations do banco de dados
-- [ ] Criar entities(models) para JPA
-- [ ] Criar repositories e services
+- [x] Criar conexão com banco de dados
+- [x] Criar migrations do banco de dados
+- [x] Criar entities(models) para JPA
+- [x] Criar repositories
+- [ ] Criar services
 - [ ] Criar controllers
   - [ ] Create
   - [ ] Read One
