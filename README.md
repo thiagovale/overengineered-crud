@@ -7,13 +7,13 @@
 - [x] Criar migrations do banco de dados
 - [x] Criar entities(models) para JPA
 - [x] Criar repositories
-- [ ] Criar services
-- [ ] Criar controllers
-  - [ ] Create
-  - [ ] Read One
-  - [ ] Read Many
-  - [ ] Update
-  - [ ] Delete
+- [x] Criar services
+- [x] Criar controllers
+  - [x] Create
+  - [x] Read One
+  - [x] Read Many
+  - [x] Update
+  - [x] Delete
 - [ ] Adicionar logs para escrita e leitura (e salvar no banco de dados)
 - [ ] Adicionar validação de input nas rotas
 - [ ] Adicionar autenticacao com JWT
