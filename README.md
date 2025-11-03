@@ -16,7 +16,7 @@
   - [x] Delete
 - [x] Adicionar logs com persistencia no banco de dados
 - [x] Adicionar validação de input nas rotas
-- [ ] Adicionar autenticacao com JWT
+- [x] Adicionar autenticacao com JWT
 - [x] Adicionar handlers de error e success
 - [ ] Adicionar documentacao com Swagger
 - [ ] Implementar fila com RabbitMQ
