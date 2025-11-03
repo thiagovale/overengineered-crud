@@ -3,6 +3,8 @@ package com.example.backend.config;
 import com.example.backend.service.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import java.nio.charset.StandardCharsets;
 
 @Component
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class LogInterceptor implements HandlerInterceptor {
 
     private final LogService logService;

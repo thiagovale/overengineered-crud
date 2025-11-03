@@ -19,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final SecurityFilter securityFilter;
+    private final ContentCachingFilter contentCachingFilter;
 
-    public SecurityConfig(SecurityFilter securityFilter) {
+    public SecurityConfig(SecurityFilter securityFilter, ContentCachingFilter contentCachingFilter) {
         this.securityFilter = securityFilter;
+        this.contentCachingFilter = contentCachingFilter;
     }
 
     @Bean
@@ -35,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .anyRequest().authenticated())
+                .addFilterBefore(contentCachingFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
