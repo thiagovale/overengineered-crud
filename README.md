@@ -15,7 +15,7 @@
   - [x] Update
   - [x] Delete
 - [ ] Adicionar logs para escrita e leitura (e salvar no banco de dados)
-- [ ] Adicionar validação de input nas rotas
+- [x] Adicionar validação de input nas rotas
 - [ ] Adicionar autenticacao com JWT
 - [ ] Adicionar handlers de error e success
 - [ ] Adicionar documentacao com Swagger
