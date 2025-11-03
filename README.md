@@ -14,10 +14,10 @@
   - [x] Read Many
   - [x] Update
   - [x] Delete
-- [ ] Adicionar logs para escrita e leitura (e salvar no banco de dados)
+- [x] Adicionar logs com persistencia no banco de dados
 - [x] Adicionar validação de input nas rotas
 - [ ] Adicionar autenticacao com JWT
-- [ ] Adicionar handlers de error e success
+- [x] Adicionar handlers de error e success
 - [ ] Adicionar documentacao com Swagger
 - [ ] Implementar fila com RabbitMQ
 - [ ] Implementar cache com Redis
