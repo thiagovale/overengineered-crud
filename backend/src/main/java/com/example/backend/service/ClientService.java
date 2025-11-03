@@ -3,12 +3,12 @@ package com.example.backend.service;
 import com.example.backend.entity.Address;
 import com.example.backend.entity.Client;
 import com.example.backend.entity.PhoneNumber;
+import com.example.backend.exception.ClientNotFoundException;
 import com.example.backend.repository.ClientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ClientService {
@@ -25,8 +25,9 @@ public class ClientService {
         return clientRepository.findAll();
     }
 
-    public Optional<Client> findById(Long id) {
-        return clientRepository.findById(id);
+    public Client findById(Long id) {
+        return clientRepository.findById(id)
+                .orElseThrow(() -> new ClientNotFoundException(id));
     }
 
     @Transactional
@@ -45,7 +46,7 @@ public class ClientService {
     @Transactional
     public Client update(Long id, Client clientDetails) {
         Client client = clientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Client not found with id: " + id));
+                .orElseThrow(() -> new ClientNotFoundException(id));
 
         client.setFirstName(clientDetails.getFirstName());
         client.setLastName(clientDetails.getLastName());
@@ -121,6 +122,9 @@ public class ClientService {
 
     @Transactional
     public void deleteById(Long id) {
+        if (!clientRepository.existsById(id)) {
+            throw new ClientNotFoundException(id);
+        }
         clientRepository.deleteById(id);
     }
 }
