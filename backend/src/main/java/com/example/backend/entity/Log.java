@@ -46,4 +46,7 @@ public class Log {
 
     @Column(nullable = false)
     private Instant timestamp;
+
+    @Column(name = "user_id")
+    private String userId;
 }

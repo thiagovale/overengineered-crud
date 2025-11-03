@@ -3,6 +3,8 @@ package com.example.backend.config;
 import com.example.backend.service.LogService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -36,17 +38,29 @@ public class LogInterceptor implements HandlerInterceptor {
         Long startTime = (Long) request.getAttribute("startTime");
         Long durationMs = startTime != null ? System.currentTimeMillis() - startTime : null;
 
+        String userId = getCurrentUserId();
 
         String requestBody = getRequestBody(request);
-        logService.logRequest(traceId, method, path, requestBody);
-
+        logService.logRequest(traceId, method, path, requestBody, userId);
 
         String responseBody = getResponseBody(response);
         if (statusCode >= 400) {
-            logService.logError(traceId, method, path, statusCode, responseBody, durationMs);
+            logService.logError(traceId, method, path, statusCode, responseBody, durationMs, userId);
         } else {
-            logService.logResponse(traceId, method, path, statusCode, responseBody, durationMs);
+            logService.logResponse(traceId, method, path, statusCode, responseBody, durationMs, userId);
         }
+    }
+
+    private String getCurrentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth != null && auth.getPrincipal() instanceof JWTUserData) {
+            JWTUserData userData = (JWTUserData) auth.getPrincipal();
+            Long userId = userData.userId();
+            return userId != null ? userId.toString() : null;
+        }
+
+        return null;
     }
 
     private String getRequestBody(HttpServletRequest request) {

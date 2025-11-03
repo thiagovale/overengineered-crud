@@ -25,63 +25,51 @@ public class LogService {
     }
 
     @Async
-    public void logRequest(String traceId, String method, String path, Object body) {
-        try {
-            Log log = new Log();
-            log.setTraceId(traceId);
-            log.setType("REQUEST");
-            log.setMethod(method);
-            log.setPath(path);
-            log.setRequestBody(toJson(body));
-            log.setTimestamp(Instant.now());
+    public void logRequest(String traceId, String method, String path, Object body, String userId) {
+        Log log = new Log();
+        log.setTraceId(traceId);
+        log.setType("REQUEST");
+        log.setMethod(method);
+        log.setPath(path);
+        log.setRequestBody(toJson(body));
+        log.setUserId(userId);
+        log.setTimestamp(Instant.now());
 
-            logRepository.save(log);
-            logger.debug("Request logged: {} {} [{}]", method, path, traceId);
-        } catch (Exception e) {
-            logger.error("Error logging request: {} {} [{}]", method, path, traceId, e);
-        }
+        logRepository.save(log);
     }
 
     @Async
     public void logResponse(String traceId, String method, String path,
-                            Integer statusCode, Object body, Long durationMs) {
-        try {
-            Log log = new Log();
-            log.setTraceId(traceId);
-            log.setType("RESPONSE");
-            log.setMethod(method);
-            log.setPath(path);
-            log.setStatusCode(statusCode);
-            log.setResponseBody(toJson(body));
-            log.setDurationMs(durationMs);
-            log.setTimestamp(Instant.now());
+                            Integer statusCode, Object body, Long durationMs, String userId) {
+        Log log = new Log();
+        log.setTraceId(traceId);
+        log.setType("RESPONSE");
+        log.setMethod(method);
+        log.setPath(path);
+        log.setStatusCode(statusCode);
+        log.setResponseBody(toJson(body));
+        log.setDurationMs(durationMs);
+        log.setUserId(userId);
+        log.setTimestamp(Instant.now());
 
-            logRepository.save(log);
-            logger.debug("Response logged: {} {} {} [{}] ({}ms)", method, path, statusCode, traceId, durationMs);
-        } catch (Exception e) {
-            logger.error("Error logging response: {} {} [{}]", method, path, traceId, e);
-        }
+        logRepository.save(log);
     }
 
     @Async
     public void logError(String traceId, String method, String path,
-                         Integer statusCode, String errorMessage, Long durationMs) {
-        try {
-            Log log = new Log();
-            log.setTraceId(traceId);
-            log.setType("ERROR");
-            log.setMethod(method);
-            log.setPath(path);
-            log.setStatusCode(statusCode);
-            log.setResponseBody(errorMessage);
-            log.setDurationMs(durationMs);
-            log.setTimestamp(Instant.now());
+                         Integer statusCode, String errorMessage, Long durationMs, String userId) {
+        Log log = new Log();
+        log.setTraceId(traceId);
+        log.setType("ERROR");
+        log.setMethod(method);
+        log.setPath(path);
+        log.setStatusCode(statusCode);
+        log.setResponseBody(errorMessage);
+        log.setDurationMs(durationMs);
+        log.setUserId(userId);
+        log.setTimestamp(Instant.now());
 
-            logRepository.save(log);
-            logger.error("Error logged: {} {} {} [{}] ({}ms)", method, path, statusCode, traceId, durationMs);
-        } catch (Exception e) {
-            logger.error("Error logging error: {} {} [{}]", method, path, traceId, e);
-        }
+        logRepository.save(log);
     }
 
     public List<Log> findByTraceId(String traceId) {
@@ -110,7 +98,6 @@ public class LogService {
         try {
             return objectMapper.writeValueAsString(obj);
         } catch (Exception e) {
-            logger.warn("Error converting to JSON: {}", obj, e);
             return obj.toString();
         }
     }
