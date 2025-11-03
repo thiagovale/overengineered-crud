@@ -31,8 +31,6 @@ public class Address {
     @Column(name = "zipcode", nullable = false)
     private String zipCode;
 
-    // remover quando comecar a usar DTO
-    @JsonBackReference
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;

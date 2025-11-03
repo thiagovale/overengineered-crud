@@ -38,13 +38,9 @@ public class Client {
     @Column(name = "document_number", nullable = false, unique = true)
     private String documentNumber;
 
-    // remover quando comecar a usar DTO
-    @JsonManagedReference
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 
-    // remover quando comecar a usar DTO
-    @JsonManagedReference
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PhoneNumber> phoneNumbers = new ArrayList<>();
 }
