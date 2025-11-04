@@ -18,13 +18,71 @@
 - [x] Adicionar validação de input nas rotas
 - [x] Adicionar autenticacao com JWT
 - [x] Adicionar handlers de error e success
-- [ ] Adicionar documentacao com Swagger
+- [x] Adicionar documentacao com Swagger
 - [x] Implementar fila com RabbitMQ
 - [x] Implementar cache com Redis
-- [ ] Adicionar testes unitarios
-- [ ] Adicionar testes end to end
+- [x] Adicionar testes unitarios
+- [x] Adicionar testes end to end
 - [x] Criar config de docker-compose para redis, rabbitmq e postgresql
 
 ### Front end
 
 - [ ] Criar setup inicial
+
+## 📚 Documentação da API
+
+A documentação interativa da API está disponível através do Swagger UI:
+
+- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
+- **OpenAPI JSON**: http://localhost:8080/v3/api-docs
+
+### Como usar o Swagger
+
+1. **Inicie o backend**: `cd backend && ./mvnw spring-boot:run`
+2. **Acesse**: http://localhost:8080/swagger-ui/index.html
+
+### Autenticação no Swagger
+
+A maioria dos endpoints requer autenticação JWT. Siga estes passos:
+
+1. **Registre um usuário**:
+
+   - Vá até `Authentication` > `POST /auth/register`
+   - Clique em "Try it out"
+   - Preencha o JSON:
+     ```json
+     {
+       "username": "joao",
+       "password": "senha123"
+     }
+     ```
+   - Clique em "Execute"
+
+2. **Faça login**:
+
+   - Vá até `Authentication` > `POST /auth/login`
+   - Clique em "Try it out"
+   - Use as mesmas credenciais do registro
+   - Clique em "Execute"
+   - **Copie o token** retornado (sem as aspas)
+
+3. **Autorize no Swagger**:
+   - Clique no botão **"Authorize"** 🔓 no topo da página
+   - Cole o token no campo "Value" (apenas o token, sem "Bearer ")
+   - Clique em "Authorize" e depois "Close"
+   - Pronto! Agora você pode usar todos os endpoints 🎉
+
+### Principais Endpoints
+
+**Authentication** (sem autenticação necessária):
+
+- `POST /auth/register` - Criar novo usuário
+- `POST /auth/login` - Fazer login e receber token JWT
+
+**Clients** (requer autenticação):
+
+- `GET /client` - Listar todos os clientes
+- `GET /client/{id}` - Buscar cliente por ID
+- `POST /client` - Criar novo cliente
+- `PUT /client/{id}` - Atualizar cliente
+- `DELETE /client/{id}` - Deletar cliente
