@@ -6,6 +6,8 @@ import com.example.backend.entity.PhoneNumber;
 import com.example.backend.exception.ClientNotFoundException;
 import com.example.backend.repository.ClientRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,15 +23,18 @@ public class ClientService {
         this.clientRepository = clientRepository;
     }
 
+    @Cacheable(value = "clients", key = "'all'")
     public List<Client> findAll() {
         return clientRepository.findAll();
     }
 
+    @Cacheable(value = "clients", key = "#id")
     public Client findById(Long id) {
         return clientRepository.findById(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
     }
 
+    @CacheEvict(value = "clients", allEntries = true)
     @Transactional
     public Client save(Client client) {
         if (client.getAddresses() != null) {
@@ -42,7 +47,7 @@ public class ClientService {
         return clientRepository.save(client);
     }
 
-
+    @CacheEvict(value = "clients", allEntries = true)
     @Transactional
     public Client update(Long id, Client clientDetails) {
         Client client = clientRepository.findById(id)
@@ -120,6 +125,7 @@ public class ClientService {
         });
     }
 
+    @CacheEvict(value = "clients", allEntries = true)
     @Transactional
     public void deleteById(Long id) {
         if (!clientRepository.existsById(id)) {
