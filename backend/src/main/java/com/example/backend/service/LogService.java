@@ -87,9 +87,11 @@ public class LogService {
     private void publishLog(LogMessage message) {
         try {
             rabbitTemplate.convertAndSend(logsExchange, logsRoutingKey, message);
-            logger.debug("Log published to RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId());
+            // Log removed to avoid infinite loop with RabbitMQ
         } catch (Exception e) {
-            logger.error("Failed to publish log to RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId(), e);
+            // Log to console only, not to RabbitMQ
+            System.err.println("Failed to publish log to RabbitMQ: " + message.getMethod() + " " + message.getPath() + " [" + message.getTraceId() + "]");
+            e.printStackTrace();
         }
     }
 

@@ -35,10 +35,11 @@ public class LogConsumer {
             log.setTimestamp(message.getTimestamp());
 
             logRepository.save(log);
-            logger.debug("Log saved from RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId());
+            // Log removed to avoid infinite loop with RabbitMQ
         } catch (Exception e) {
-            logger.error("Failed to save log from RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId(), e);
-            throw e;
+            // Log to console only, not to RabbitMQ
+            System.err.println("Failed to save log from RabbitMQ: " + message.getMethod() + " " + message.getPath() + " [" + message.getTraceId() + "]");
+            e.printStackTrace();
         }
     }
 }

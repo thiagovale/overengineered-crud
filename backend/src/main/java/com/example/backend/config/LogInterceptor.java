@@ -33,9 +33,16 @@ public class LogInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response,
                                 Object handler, Exception ex) {
+        String path = request.getRequestURI();
+        
+        // Skip logging for Swagger/OpenAPI endpoints to avoid loops and unnecessary logs
+        if (path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || 
+            path.startsWith("/api-docs") || path.contains("swagger") || path.contains("api-docs")) {
+            return;
+        }
+        
         String traceId = TraceContext.getTraceId();
         String method = request.getMethod();
-        String path = request.getRequestURI();
         Integer statusCode = response.getStatus();
 
         Long startTime = (Long) request.getAttribute("startTime");

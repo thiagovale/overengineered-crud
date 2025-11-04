@@ -8,6 +8,13 @@ import com.example.backend.dto.response.LoginResponse;
 import com.example.backend.dto.response.RegisterUserResponse;
 import com.example.backend.entity.User;
 import com.example.backend.repository.UserRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication", description = "Endpoints de autenticação e registro de usuários")
 public class AuthController {
 
     private final UserRepository userRepository;
@@ -41,6 +49,13 @@ public class AuthController {
         this.tokenConfig = tokenConfig;
     }
 
+    @Operation(summary = "Fazer login", description = "Autentica um usuário e retorna um token JWT que deve ser usado nos demais endpoints")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = @Content)
+    })
+    @SecurityRequirements // Este endpoint não requer autenticação
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 
@@ -53,6 +68,13 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
+    @Operation(summary = "Registrar novo usuário", description = "Cria uma nova conta de usuário no sistema")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Usuário criado com sucesso",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RegisterUserResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos ou usuário já existe", content = @Content)
+    })
+    @SecurityRequirements // Este endpoint não requer autenticação
     @PostMapping("/register")
     public  ResponseEntity<RegisterUserResponse> register(@Valid @RequestBody RegisterUserRequest request) {
         User newUser = new User();
