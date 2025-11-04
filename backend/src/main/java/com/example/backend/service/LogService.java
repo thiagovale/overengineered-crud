@@ -1,11 +1,13 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.LogMessage;
 import com.example.backend.entity.Log;
 import com.example.backend.repository.LogRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,61 +18,82 @@ public class LogService {
 
     private static final Logger logger = LoggerFactory.getLogger(LogService.class);
 
+    private final RabbitTemplate rabbitTemplate;
     private final LogRepository logRepository;
     private final ObjectMapper objectMapper;
 
-    public LogService(LogRepository logRepository, ObjectMapper objectMapper) {
+    @Value("${rabbitmq.exchange.logs}")
+    private String logsExchange;
+
+    @Value("${rabbitmq.routing-key.logs}")
+    private String logsRoutingKey;
+
+    public LogService(RabbitTemplate rabbitTemplate, LogRepository logRepository, ObjectMapper objectMapper) {
+        this.rabbitTemplate = rabbitTemplate;
         this.logRepository = logRepository;
         this.objectMapper = objectMapper;
     }
 
-    @Async
-    public void logRequest(String traceId, String method, String path, Object body, String userId) {
-        Log log = new Log();
-        log.setTraceId(traceId);
-        log.setType("REQUEST");
-        log.setMethod(method);
-        log.setPath(path);
-        log.setRequestBody(toJson(body));
-        log.setUserId(userId);
-        log.setTimestamp(Instant.now());
+    // publish logs to rabbitmq
 
-        logRepository.save(log);
+    public void logRequest(String traceId, String method, String path, Object body, String userId) {
+        LogMessage message = LogMessage.builder()
+                .traceId(traceId)
+                .type("REQUEST")
+                .method(method)
+                .path(path)
+                .requestBody(toJson(body))
+                .userId(userId)
+                .timestamp(Instant.now())
+                .build();
+
+        publishLog(message);
     }
 
-    @Async
     public void logResponse(String traceId, String method, String path,
                             Integer statusCode, Object body, Long durationMs, String userId) {
-        Log log = new Log();
-        log.setTraceId(traceId);
-        log.setType("RESPONSE");
-        log.setMethod(method);
-        log.setPath(path);
-        log.setStatusCode(statusCode);
-        log.setResponseBody(toJson(body));
-        log.setDurationMs(durationMs);
-        log.setUserId(userId);
-        log.setTimestamp(Instant.now());
+        LogMessage message = LogMessage.builder()
+                .traceId(traceId)
+                .type("RESPONSE")
+                .method(method)
+                .path(path)
+                .statusCode(statusCode)
+                .responseBody(toJson(body))
+                .durationMs(durationMs)
+                .userId(userId)
+                .timestamp(Instant.now())
+                .build();
 
-        logRepository.save(log);
+        publishLog(message);
     }
 
-    @Async
     public void logError(String traceId, String method, String path,
                          Integer statusCode, String errorMessage, Long durationMs, String userId) {
-        Log log = new Log();
-        log.setTraceId(traceId);
-        log.setType("ERROR");
-        log.setMethod(method);
-        log.setPath(path);
-        log.setStatusCode(statusCode);
-        log.setResponseBody(errorMessage);
-        log.setDurationMs(durationMs);
-        log.setUserId(userId);
-        log.setTimestamp(Instant.now());
+        LogMessage message = LogMessage.builder()
+                .traceId(traceId)
+                .type("ERROR")
+                .method(method)
+                .path(path)
+                .statusCode(statusCode)
+                .responseBody(errorMessage)
+                .durationMs(durationMs)
+                .userId(userId)
+                .timestamp(Instant.now())
+                .build();
 
-        logRepository.save(log);
+        publishLog(message);
     }
+
+    private void publishLog(LogMessage message) {
+        try {
+            rabbitTemplate.convertAndSend(logsExchange, logsRoutingKey, message);
+            logger.debug("Log published to RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId());
+        } catch (Exception e) {
+            logger.error("Failed to publish log to RabbitMQ: {} {} [{}]", message.getMethod(), message.getPath(), message.getTraceId(), e);
+        }
+    }
+
+    // query logs
 
     public List<Log> findByTraceId(String traceId) {
         return logRepository.findByTraceIdOrderByTimestampAsc(traceId);
