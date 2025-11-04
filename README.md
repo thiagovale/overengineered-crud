@@ -19,11 +19,11 @@
 - [x] Adicionar autenticacao com JWT
 - [x] Adicionar handlers de error e success
 - [ ] Adicionar documentacao com Swagger
-- [ ] Implementar fila com RabbitMQ
-- [ ] Implementar cache com Redis
+- [x] Implementar fila com RabbitMQ
+- [x] Implementar cache com Redis
 - [ ] Adicionar testes unitarios
 - [ ] Adicionar testes end to end
-- [ ] Criar config de docker-compose para redis, rabbitmq e postgresql
+- [x] Criar config de docker-compose para redis, rabbitmq e postgresql
 
 ### Front end
 
