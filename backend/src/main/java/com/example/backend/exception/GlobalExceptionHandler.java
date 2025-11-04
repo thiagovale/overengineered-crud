@@ -42,6 +42,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
+        ex.printStackTrace(); // Log full stack trace for debugging
         ErrorResponse error = ErrorResponse.of(
                 "An unexpected error occurred",
                 ex.getClass().getSimpleName(),

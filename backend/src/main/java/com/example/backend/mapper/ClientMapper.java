@@ -62,17 +62,17 @@ public class ClientMapper {
         client.setDocumentNumber(dto.documentNumber());
 
         if (dto.addresses() != null) {
-            List<Address> addresses = dto.addresses().stream()
+            java.util.Set<Address> addresses = dto.addresses().stream()
                     .map(this::toAddressEntity)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
             addresses.forEach(address -> address.setClient(client));
             client.setAddresses(addresses);
         }
 
         if (dto.phoneNumbers() != null) {
-            List<PhoneNumber> phones = dto.phoneNumbers().stream()
+            java.util.Set<PhoneNumber> phones = dto.phoneNumbers().stream()
                     .map(this::toPhoneEntity)
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
             phones.forEach(phone -> phone.setClient(client));
             client.setPhoneNumbers(phones);
         }

@@ -1,9 +1,11 @@
 package com.example.backend.service;
 
+import com.example.backend.dto.response.ClientResponseDTO;
 import com.example.backend.entity.Address;
 import com.example.backend.entity.Client;
 import com.example.backend.entity.PhoneNumber;
 import com.example.backend.exception.ClientNotFoundException;
+import com.example.backend.mapper.ClientMapper;
 import com.example.backend.repository.ClientRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,27 +18,32 @@ import java.util.List;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final ClientMapper clientMapper;
 
 
-    public ClientService(ClientRepository clientRepository)
-    {
+    public ClientService(ClientRepository clientRepository, ClientMapper clientMapper) {
         this.clientRepository = clientRepository;
+        this.clientMapper = clientMapper;
     }
 
     @Cacheable(value = "clients", key = "'all'")
-    public List<Client> findAll() {
-        return clientRepository.findAll();
+    @Transactional
+    public List<ClientResponseDTO> findAll() {
+        List<Client> clients = clientRepository.findAllWithRelations();
+        return clientMapper.toResponseDTOList(clients);
     }
 
     @Cacheable(value = "clients", key = "#id")
-    public Client findById(Long id) {
-        return clientRepository.findById(id)
+    @Transactional
+    public ClientResponseDTO findById(Long id) {
+        Client client = clientRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
+        return clientMapper.toResponseDTO(client);
     }
 
     @CacheEvict(value = "clients", allEntries = true)
     @Transactional
-    public Client save(Client client) {
+    public ClientResponseDTO save(Client client) {
         if (client.getAddresses() != null) {
             client.getAddresses().forEach(address -> address.setClient(client));
         }
@@ -44,13 +51,17 @@ public class ClientService {
             client.getPhoneNumbers().forEach(phone -> phone.setClient(client));
         }
 
-        return clientRepository.save(client);
+        Client saved = clientRepository.save(client);
+        return clientMapper.toResponseDTO(
+                clientRepository.findByIdWithRelations(saved.getId())
+                        .orElseThrow(() -> new ClientNotFoundException(saved.getId()))
+        );
     }
 
     @CacheEvict(value = "clients", allEntries = true)
     @Transactional
-    public Client update(Long id, Client clientDetails) {
-        Client client = clientRepository.findById(id)
+    public ClientResponseDTO update(Long id, Client clientDetails) {
+        Client client = clientRepository.findByIdWithRelations(id)
                 .orElseThrow(() -> new ClientNotFoundException(id));
 
         client.setFirstName(clientDetails.getFirstName());
@@ -59,15 +70,17 @@ public class ClientService {
         client.setEmail(clientDetails.getEmail());
         client.setDocumentNumber(clientDetails.getDocumentNumber());
 
-
         updateAddresses(client, clientDetails.getAddresses());
-
         updatePhoneNumbers(client, clientDetails.getPhoneNumbers());
 
-        return clientRepository.save(client);
+        Client updated = clientRepository.save(client);
+        return clientMapper.toResponseDTO(
+                clientRepository.findByIdWithRelations(updated.getId())
+                        .orElseThrow(() -> new ClientNotFoundException(updated.getId()))
+        );
     }
 
-    private void updateAddresses(Client client, List<Address> newAddresses) {
+    private void updateAddresses(Client client, java.util.Collection<Address> newAddresses) {
         if (newAddresses == null) {
             return;
         }
@@ -96,18 +109,16 @@ public class ClientService {
         });
     }
 
-    private void updatePhoneNumbers(Client client, List<PhoneNumber> newPhones) {
+    private void updatePhoneNumbers(Client client, java.util.Collection<PhoneNumber> newPhones) {
         if (newPhones == null) {
             return;
         }
-
 
         client.getPhoneNumbers().removeIf(existingPhone ->
                 newPhones.stream()
                         .noneMatch(newPhone -> newPhone.getId() != null &&
                                 newPhone.getId().equals(existingPhone.getId()))
         );
-
 
         newPhones.forEach(newPhone -> {
             if (newPhone.getId() != null) {
