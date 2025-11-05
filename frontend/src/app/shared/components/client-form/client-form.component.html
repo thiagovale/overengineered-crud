@@ -1,0 +1,143 @@
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="client-form">
+  <h2>{{ initialData ? 'Editar Cliente' : 'Novo Cliente' }}</h2>
+
+  <app-input
+    label="Primeiro Nome"
+    placeholder="Digite o primeiro nome"
+    [error]="isFieldInvalid('firstName') ? getErrorMessage('firstName') : ''"
+    formControlName="firstName">
+  </app-input>
+
+  <app-input
+    label="Sobrenome"
+    placeholder="Digite o sobrenome"
+    [error]="isFieldInvalid('lastName') ? getErrorMessage('lastName') : ''"
+    formControlName="lastName">
+  </app-input>
+
+  <app-input
+    label="Email"
+    type="email"
+    placeholder="Digite o email"
+    [error]="isFieldInvalid('email') ? getErrorMessage('email') : ''"
+    formControlName="email">
+  </app-input>
+
+  <app-input
+    label="CPF/Documento"
+    placeholder="Digite o documento"
+    [error]="isFieldInvalid('documentNumber') ? getErrorMessage('documentNumber') : ''"
+    formControlName="documentNumber">
+  </app-input>
+
+  <app-input
+    label="Data de Nascimento"
+    type="date"
+    [error]="isFieldInvalid('dateOfBirth') ? getErrorMessage('dateOfBirth') : ''"
+    formControlName="dateOfBirth">
+  </app-input>
+
+  <!-- Endereços -->
+  <div class="form-section">
+    <div class="section-header">
+      <h3>Endereços</h3>
+      <app-button
+        label="+ Adicionar Endereço"
+        variant="secondary"
+        type="button"
+        (clicked)="addAddress()">
+      </app-button>
+    </div>
+
+    <div formArrayName="addresses" class="array-container">
+      <div *ngFor="let address of addresses.controls; let i = index" [formGroupName]="i" class="array-item">
+        <div class="array-item-header">
+          <h4>Endereço {{ i + 1 }}</h4>
+          <button type="button" class="remove-button" (click)="removeAddress(i)">
+            &times;
+          </button>
+        </div>
+
+        <app-input
+          label="Rua"
+          placeholder="Digite a rua"
+          formControlName="street">
+        </app-input>
+
+        <div class="input-row">
+          <app-input
+            label="Cidade"
+            placeholder="Digite a cidade"
+            formControlName="city">
+          </app-input>
+
+          <app-input
+            label="Estado"
+            placeholder="Digite o estado"
+            formControlName="state">
+          </app-input>
+        </div>
+
+        <app-input
+          label="CEP"
+          placeholder="Digite o CEP"
+          formControlName="zipCode">
+        </app-input>
+      </div>
+    </div>
+  </div>
+
+  <!-- Telefones -->
+  <div class="form-section">
+    <div class="section-header">
+      <h3>Telefones</h3>
+      <app-button
+        label="+ Adicionar Telefone"
+        variant="secondary"
+        type="button"
+        (clicked)="addPhoneNumber()">
+      </app-button>
+    </div>
+
+    <div formArrayName="phoneNumbers" class="array-container">
+      <div *ngFor="let phone of phoneNumbers.controls; let i = index" [formGroupName]="i" class="array-item">
+        <div class="array-item-header">
+          <h4>Telefone {{ i + 1 }}</h4>
+          <button type="button" class="remove-button" (click)="removePhoneNumber(i)">
+            &times;
+          </button>
+        </div>
+
+        <app-input
+          label="Número"
+          placeholder="Digite o número"
+          formControlName="number">
+        </app-input>
+
+        <div class="form-group">
+          <label>Tipo</label>
+          <select formControlName="type" class="form-select">
+            <option value="mobile">Celular</option>
+            <option value="home">Residencial</option>
+            <option value="work">Comercial</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <app-button
+      label="Cancelar"
+      variant="secondary"
+      type="button"
+      (clicked)="onCancel()">
+    </app-button>
+    <app-button
+      label="Salvar"
+      variant="primary"
+      type="submit"
+      [disabled]="clientForm.invalid">
+    </app-button>
+  </div>
+</form>

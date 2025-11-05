@@ -1,0 +1,70 @@
+<div class="modal-backdrop" (click)="onBackdropClick($event)" *ngIf="client">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Detalhes do Cliente</h2>
+      <button class="close-button" (click)="onClose()">&times;</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-section">
+        <h3>Informações Pessoais</h3>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="label">ID:</span>
+            <span class="value">{{ client.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Nome:</span>
+            <span class="value">{{ client.firstName }} {{ client.lastName }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Email:</span>
+            <span class="value">{{ client.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Documento:</span>
+            <span class="value">{{ client.documentNumber }}</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Data de Nascimento:</span>
+            <span class="value">{{ client.dateOfBirth }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="client.addresses.length > 0">
+        <h3>Endereços</h3>
+        <div class="list-container">
+          <div class="list-item" *ngFor="let address of client.addresses">
+            <p><strong>Rua:</strong> {{ address.street }}</p>
+            <p><strong>Cidade:</strong> {{ address.city }}</p>
+            <p><strong>Estado:</strong> {{ address.state }}</p>
+            <p><strong>CEP:</strong> {{ address.zipCode }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="client.phoneNumbers.length > 0">
+        <h3>Telefones</h3>
+        <div class="list-container">
+          <div class="list-item" *ngFor="let phone of client.phoneNumbers">
+            <p><strong>Número:</strong> {{ phone.number }}</p>
+            <p><strong>Tipo:</strong> {{ phone.type }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-section" *ngIf="client.addresses.length === 0 && client.phoneNumbers.length === 0">
+        <p class="empty-message">Nenhum endereço ou telefone cadastrado.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <app-button
+        label="Fechar"
+        variant="secondary"
+        (clicked)="onClose()">
+      </app-button>
+    </div>
+  </div>
+</div>

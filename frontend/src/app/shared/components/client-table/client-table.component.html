@@ -1,0 +1,41 @@
+<div class="table-container">
+  <table class="client-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Primeiro Nome</th>
+        <th>Sobrenome</th>
+        <th>Email</th>
+        <th>Documento</th>
+        <th>Data Nascimento</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let client of clients" class="table-row" (click)="onRowClick(client.id)">
+        <td>{{ client.id }}</td>
+        <td>{{ client.firstName }}</td>
+        <td>{{ client.lastName }}</td>
+        <td>{{ client.email }}</td>
+        <td>{{ client.documentNumber }}</td>
+        <td>{{ client.dateOfBirth }}</td>
+        <td class="actions" (click)="$event.stopPropagation()">
+          <app-button
+            label="Editar"
+            variant="secondary"
+            (clicked)="onEdit(client)">
+          </app-button>
+          <app-button
+            label="Deletar"
+            variant="danger"
+            (clicked)="onDelete(client.id)">
+          </app-button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="clients.length === 0" class="empty-state">
+    <p>Nenhum cliente cadastrado</p>
+  </div>
+</div>
