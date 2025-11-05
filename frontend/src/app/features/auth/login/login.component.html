@@ -1,0 +1,57 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1 class="login-title">Login</h1>
+    <p class="login-subtitle">Acesse sua conta</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <div class="form-group">
+        <label for="username">Usuário</label>
+        <app-input
+          id="username"
+          formControlName="username"
+          placeholder="Digite seu usuário"
+          [error]="getErrorMessage('username')"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <app-input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Digite sua senha"
+          [error]="getErrorMessage('password')"
+        />
+      </div>
+
+      @if (errorMessage) {
+        <div class="error-banner">
+          {{ errorMessage }}
+        </div>
+      }
+
+      <app-button
+        type="submit"
+        [disabled]="loginForm.invalid || isLoading"
+        class="login-button"
+      >
+        {{ isLoading ? 'Entrando...' : 'Entrar' }}
+      </app-button>
+
+      <div class="register-link">
+        <span>Não tem uma conta?</span>
+        <button type="button" class="link-button" (click)="openRegisterModal()">
+          Criar conta
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@if (showRegisterModal) {
+  <app-register-modal
+    (close)="closeRegisterModal()"
+    (registered)="onRegistered()">
+  </app-register-modal>
+}
