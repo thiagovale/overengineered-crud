@@ -27,7 +27,21 @@
 
 ### Front end
 
-- [ ] Criar setup inicial
+- [x] Criar setup inicial
+- [x] Configurar serviço HTTP e interceptors
+- [x] Criar models/interfaces TypeScript
+- [x] Criar componente de botão
+- [x] Criar componente de input
+- [x] Criar componente de formulário reativo
+- [x] Criar componente de tabela de listagem
+- [x] Criar componente de linha da tabela com ações
+- [x] Criar componente modal de client detail
+- [x] Implementar client service
+- [x] Criar guard de rota para proteção
+- [ ] Implementar filtros e ordenação na tabela
+- [ ] Adicionar paginação
+- [x] Criar componente de login e registro
+- [x] Criar rotas
 
 ## 📚 Documentação da API
 
