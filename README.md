@@ -43,6 +43,12 @@
 - [x] Criar componente de login e registro
 - [x] Criar rotas
 
+### Tasks adicionais
+- [ ] Paginação e filtros no backend
+- [ ] Corrigir lógica de persistência de dados
+- [ ] Mascaramento de dados sensíveis
+
+
 ## 📚 Documentação da API
 
 A documentação interativa da API está disponível através do Swagger UI:
